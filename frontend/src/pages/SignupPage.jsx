@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { signup } from '../services/api';
 import './AuthForm.css'; // Reuse or create new styles
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
 const SignupPage = ({ navigate }) => {
     const [email, setEmail] = useState('');
@@ -13,7 +11,7 @@ const SignupPage = ({ navigate }) => {
         e.preventDefault();
         setMessage('');
         try {
-            const response = await axios.post(`${API_URL}/auth/signup`, { email, password });
+            const response = await signup(email, password);
             setMessage(response.data.message || "Signup successful! Please login.");
             // Optionally navigate to login after a delay or directly
             // navigate('login');

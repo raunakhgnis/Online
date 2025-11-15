@@ -1,7 +1,8 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios'; // Make sure axios is installed
+import { logout as apiLogout } from '../services/api';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:2025/api';
 
 const AuthContext = createContext(null); // Initialize with null
 
@@ -60,12 +61,10 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('auctionUser');
         console.log("User logged out locally.");
 
-        // Attempt backend logout (fire-and-forget)
+        // Attempt backend logout (fire-and-forget) using centralized helper
         if (userToLogout && userToLogout.token) {
             try {
-                await axios.post(`${API_URL}/auth/logout`, {}, {
-                    headers: { Authorization: `Bearer ${userToLogout.token}` }
-                });
+                await apiLogout();
                 console.log("Backend logout called.");
             } catch (error) {
                 console.warn("Backend logout call failed:", error.response?.data || error.message);

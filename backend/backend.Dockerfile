@@ -19,6 +19,7 @@ FROM eclipse-temurin:21-jdk
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 
-EXPOSE 2000
+# Spring Boot defaults to 8080; expose that port in the container
+EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

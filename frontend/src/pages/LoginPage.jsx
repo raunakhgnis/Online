@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import axios from 'axios';
+import { login as apiLogin } from '../services/api';
 import './AuthForm.css'; // Create or use global styles
 import { useNavigate } from 'react-router-dom';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
 //const LoginPage = ({ navigate }) => {
 const LoginPage = () => {
@@ -27,22 +26,20 @@ const LoginPage = () => {
         // }
 
         try {
-    const response = await axios.post(`${API_URL}/auth/login`, { email, password });
-
-    // Catch any frontend-level issues during login or navigation
-    try {
-        login({ email: response.data.email, token: response.data.token });
-        setMessage("Login successful!"); // Optional, for user feedback
-        navigate('home');
-    } catch (err) {
-        console.error("Login handling error:", err);
-        setMessage("Login succeeded but frontend processing failed.");
-    }
-
-} catch (error) {
-    console.error("Login request failed:", error);
-    setMessage(error.response?.data?.message || "Login failed. Please check credentials.");
-}
+            const response = await apiLogin(email, password);
+            // Use AuthContext login handler to persist user and token
+            try {
+                login({ email: response.data.email, token: response.data.token });
+                setMessage("Login successful!");
+                navigate('home');
+            } catch (err) {
+                console.error("Login handling error:", err);
+                setMessage("Login succeeded but frontend processing failed.");
+            }
+        } catch (error) {
+            console.error("Login request failed:", error);
+            setMessage(error.response?.data?.message || "Login failed. Please check credentials.");
+        }
 
     };
 

@@ -14,13 +14,17 @@ services:
     container_name: springbootonlineauction
     build:
       context: ./backend
-      dockerfile: ../backend/backend.Dockerfile
+      # dockerfile path is relative to the build context; keep it inside the context
+      dockerfile: backend.Dockerfile
     ports:
       - "2025:8080"
     environment:
-      SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/auctiondb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME=root
-      SPRING_DATASOURCE_PASSWORD=password
+      # Use service name 'mysqldb' and ensure the JDBC URL parameters are correct
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/auctiondb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+      # Ensure JPA will update/create schema (change as appropriate for production)
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
     depends_on:
       - mysqldb
     restart: on-failure
@@ -29,7 +33,7 @@ services:
     container_name: reactonlineauction
     build:
       context: ./frontend
-      dockerfile: ../frontend/frontend.Dockerfile
+      dockerfile: frontend.Dockerfile
     ports:
       - "3000:80"
     depends_on:

@@ -1,7 +1,9 @@
 // src/services/api.js
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+// Default to backend mapped port used by docker-compose (host 2025 -> container 8080).
+// Can still be overridden by VITE_API_URL at build time or Vite dev env.
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:2025/api';
 
 // Helper to get auth headers
 const getAuthHeaders = () => {
