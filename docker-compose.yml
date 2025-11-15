@@ -1,0 +1,80 @@
+services:
+  mysqldb:
+    container_name: mysql-db
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: auctiondb
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  backend:
+    container_name: springbootonlineauction
+    build:
+      context: ./backend
+      dockerfile: ../backend/backend.Dockerfile
+    ports:
+      - "2025:8080"
+    environment:
+      SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/auctiondb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME=root
+      SPRING_DATASOURCE_PASSWORD=password
+    depends_on:
+      - mysqldb
+    restart: on-failure
+
+  frontend:
+    container_name: reactonlineauction
+    build:
+      context: ./frontend
+      dockerfile: ../frontend/frontend.Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql-data:
+
+
+
+# services:
+#   mysqldb:
+#     container_name: mysql-db
+#     image: mysql:8
+#     environment:
+#       MYSQL_ROOT_PASSWORD: password
+#       MYSQL_DATABASE: auctiondb
+#       # MYSQL_USER: klu
+#       # MYSQL_PASSWORD: klu
+#     ports:
+#       - "3307:3306"
+#     volumes:
+#       - mysql-data:/var/lib/mysql   # volume added here
+
+#   backend:
+#     container_name: springbootonlineauction
+#     build:
+#       context: ./backend
+#       dockerfile: ../backend/backend.Dockerfile
+#     ports:
+#       - "2025:8080"
+#     depends_on:
+#       - mysqldb
+#     restart: on-failure
+
+#   frontend:
+#     container_name: reactonlineauction
+#     build:
+#       context: ./frontend
+#       dockerfile: ../frontend/frontend.Dockerfile
+#     ports:
+#       - "3000:80"
+#     depends_on:
+#       - backend
+
+# # Declare volumes at the bottom
+# volumes:
+#   mysql-data:
